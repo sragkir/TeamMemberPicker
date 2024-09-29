@@ -41,8 +41,9 @@ export class TeamMemberPickerControl implements ComponentFramework.StandardContr
         // Add code to update control view
         this.props.context = context;
         this.props.isPickerDisabled = context.mode.isControlDisabled;
+        console.log(context.parameters.teamMember.raw);
         if (context.parameters.teamMember.raw !== null) {
-            if (context.parameters.teamMember.raw!.indexOf("text") > 1) {
+            if (context.parameters.teamMember.raw!.indexOf("fullName") > 1) {
                 this.props.preselectedpeople = JSON.parse(context.parameters.teamMember.raw!);
             }
         }

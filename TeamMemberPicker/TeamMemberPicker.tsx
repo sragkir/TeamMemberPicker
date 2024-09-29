@@ -1,18 +1,11 @@
 import * as React from 'react';
-import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { IInputs } from "./generated/ManifestTypes";
+import { IBasePicker, IBasePickerSuggestionsProps, initializeIcons, IPersonaProps, NormalPeoplePicker, ValidationState } from '@fluentui/react';
 
-import {
-  IBasePickerSuggestionsProps,
-  IBasePicker,
-  NormalPeoplePicker,
-  ValidationState
-} from 'office-ui-fabric-react/lib/Pickers';
 
 export interface IPeoplePersona {
-  text?: string;
-  secondaryText?: string;
+  fullName?: string;
+  email?: string;
 }
 
 export interface ITeamMemberPickerProps {
@@ -127,7 +120,7 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
 
   private _onItemSelected = (item: any): Promise<IPersonaProps> => {
     const processedItem = { ...item };
-    processedItem.text = `${item.text}`;
+    processedItem.name = `${item.name}`;
     return new Promise<IPersonaProps>((resolve, reject) =>
       resolve(processedItem));
   };
@@ -137,8 +130,8 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
   private async getPeopleRelatedVal() {
     try {
       const tempPeople: IPeoplePersona[] = this._picker.current!.items!.map(item => ({
-        text: item.text,
-        secondaryText: item.secondaryText
+        fullName: item.text,
+        email: item.secondaryText
       }));
       if (this.props.peopleList) {
         this.props.peopleList(tempPeople);
@@ -193,12 +186,12 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
       try {
         const entityName = this.props.context.parameters.entityName.raw!;
         let tempPeople: any;
-
         if (entityName === "systemuser") {
+          
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=fullname,internalemailaddress&$filter=startswith(fullname,'${filterText}')`);
           People = tempPeople.entities.map((entity: any) => ({
-            text: entity.fullname,
-            secondaryText: entity.internalemailaddress
+            fullName: entity.fullname,
+            email: entity.internalemailaddress
           }));
         } else if (entityName === "aaduser") {
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=displayname,mail,accountenabled&$filter=startswith(displayname,'${filterText}') and usertype eq 'member' and mail ne null`);
@@ -209,16 +202,16 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
                 : true
             )
             .map((entity: any) => ({
-              text: entity.displayname,
-              secondaryText: entity.mail
+              fullName: entity.displayname,
+              email: entity.mail
             }));
         } else if (entityName === "team" && this.props.context.parameters.teamId.raw! !== "12345678-1234-1234-1234-123456789012") {
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords("teammemberships", `?$select=systemuserid&$filter=teamid eq ${this.props.context.parameters.teamId}`);
           const usersMatched = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=fullname,internalemailaddress,systemuserid&$filter=startswith(fullname,'${filterText}')`);
           const matchedTeamUsers = usersMatched.entities.filter((user: any) => tempPeople.entities.some((people: any) => people.systemuserid === user.systemuserid));
           People = matchedTeamUsers.map((entity: any) => ({
-            text: entity.fullname,
-            secondaryText: entity.internalemailaddress
+            fullName: entity.fullname,
+            email: entity.internalemailaddress
           }));
         }
 
