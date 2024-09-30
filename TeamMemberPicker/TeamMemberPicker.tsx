@@ -41,13 +41,18 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
 
   constructor(props: ITeamMemberPickerProps) {
     super(props);
+    const personas: IPersonaProps[] = this.props.preselectedpeople.map((user: { fullName: any; email: any; }) => ({
+      text: user.fullName !== undefined ? user.fullName : "",
+      secondaryText: user.email !== undefined ? user.email : "",
+    }));
 
     this.state = {
       currentPicker: 1,
       delayResults: false,
       peopleList: this.props.people,
       mostRecentlyUsed: [],
-      currentSelectedItems: []
+      currentSelectedItems: personas,
+
     };
     initializeIcons();
     this.handleChange = this.handleChange.bind(this);
@@ -66,7 +71,7 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
           onRemoveSuggestion={this._onRemoveSuggestion}
           onValidateInput={this._validateInput}
           removeButtonAriaLabel={'Remove'}
-          defaultSelectedItems={this.props.preselectedpeople}
+          defaultSelectedItems={this.state.currentSelectedItems}
           onItemSelected={this._onItemSelected}
           itemLimit={1}
           inputProps={{
@@ -93,7 +98,7 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
           onRemoveSuggestion={this._onRemoveSuggestion}
           onValidateInput={this._validateInput}
           removeButtonAriaLabel={'Remove'}
-          defaultSelectedItems={this.props.preselectedpeople}
+          defaultSelectedItems={this.state.currentSelectedItems}
           onItemSelected={this._onItemSelected}
           inputProps={{
             onBlur: (ev: React.FocusEvent<HTMLInputElement>) => {
@@ -187,7 +192,7 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
         const entityName = this.props.context.parameters.entityName.raw!;
         let tempPeople: any;
         if (entityName === "systemuser") {
-          
+
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=fullname,internalemailaddress&$filter=startswith(fullname,'${filterText}')`);
           People = tempPeople.entities.map((entity: any) => ({
             fullName: entity.fullname,
