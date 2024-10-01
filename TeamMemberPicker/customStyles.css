@@ -1,0 +1,11 @@
+.ms-SelectionZone {
+    background-color: #f5f5f5;
+}
+
+.ms-PickerPersona-container {
+    background-color: gainsboro;
+}
+
+.ms-PickerPersona-container:hover {
+    background-color: gray
+}

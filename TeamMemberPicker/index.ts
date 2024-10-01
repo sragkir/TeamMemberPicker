@@ -2,12 +2,11 @@ import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ITeamMemberPickerProps, IPeoplePersona, TeamMemberPickerTypes } from './TeamMemberPicker';
-export class TeamMemberPickerControl implements ComponentFramework.StandardControl<IInputs, IOutputs> {
+export class TeamMemberPickerControlV2 implements ComponentFramework.StandardControl<IInputs, IOutputs> {
     private theContainer: HTMLDivElement;
     private notifyOutputChanged: () => void;
     private _context: ComponentFramework.Context<IInputs>;
     private props: ITeamMemberPickerProps = {
-        //tableValue: this.numberFacesChanged.bind(this),
         peopleList: this.peopleList.bind(this),
     }
     /**
@@ -41,9 +40,8 @@ export class TeamMemberPickerControl implements ComponentFramework.StandardContr
         // Add code to update control view
         this.props.context = context;
         this.props.isPickerDisabled = context.mode.isControlDisabled;
-        console.log(context.parameters.teamMember.raw);
         if (context.parameters.teamMember.raw !== null) {
-            if (context.parameters.teamMember.raw!.indexOf("fullName") > 1) {
+            if (context.parameters.teamMember.raw!.indexOf("fullName") > 1 || context.parameters.teamMember.raw!.indexOf("text") > 1) {
                 this.props.preselectedpeople = JSON.parse(context.parameters.teamMember.raw!);
             }
         }

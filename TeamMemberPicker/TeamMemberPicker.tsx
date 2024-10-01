@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IInputs } from "./generated/ManifestTypes";
+import "./customStyles.css";
 import { IBasePicker, IBasePickerSuggestionsProps, initializeIcons, IPersonaProps, NormalPeoplePicker, ValidationState } from '@fluentui/react';
 
 
@@ -41,10 +42,10 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
 
   constructor(props: ITeamMemberPickerProps) {
     super(props);
-    const personas: IPersonaProps[] = this.props.preselectedpeople.map((user: { fullName: any; email: any; }) => ({
-      text: user.fullName !== undefined ? user.fullName : "",
-      secondaryText: user.email !== undefined ? user.email : "",
-    }));
+    const personas: IPersonaProps[] = this.props.preselectedpeople !== undefined || null ? this.props.preselectedpeople.map((user: { fullName: any; email: any; text: any; secondaryText: any; }) => ({
+      text: user.fullName !== undefined || null ? user.fullName : user.text !== undefined || null ? user.text : "",
+      secondaryText: user.email !== undefined || null ? user.email : user.secondaryText !== undefined || null ? user.secondaryText : "",
+    })) : [];
 
     this.state = {
       currentPicker: 1,
@@ -59,60 +60,62 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
   }
 
   public render() {
+
     return (
-      this.props.context.parameters.selectionType.raw! === "Single" ?
-        <NormalPeoplePicker
-          onResolveSuggestions={this._onFilterChanged}
-          onEmptyInputFocus={this._returnMostRecentlyUsed}
-          getTextFromItem={this._getTextFromItem}
-          pickerSuggestionsProps={suggestionProps}
-          className={'ms-PeoplePicker'}
-          key={'normal'}
-          onRemoveSuggestion={this._onRemoveSuggestion}
-          onValidateInput={this._validateInput}
-          removeButtonAriaLabel={'Remove'}
-          defaultSelectedItems={this.state.currentSelectedItems}
-          onItemSelected={this._onItemSelected}
-          itemLimit={1}
-          inputProps={{
-            onBlur: (ev: React.FocusEvent<HTMLInputElement>) => {
-            },
-            onFocus: (ev: React.FocusEvent<HTMLInputElement>) => {
-            },
-            'aria-label': 'People Picker'
-          }}
-          componentRef={this._picker}
-          onInputChange={this._onInputChange}
-          resolveDelay={300}
-          disabled={this.props.isPickerDisabled}
-          onChange={() => this.handleChange()}
-        />
-        :
-        <NormalPeoplePicker
-          onResolveSuggestions={this._onFilterChanged}
-          onEmptyInputFocus={this._returnMostRecentlyUsed}
-          getTextFromItem={this._getTextFromItem}
-          pickerSuggestionsProps={suggestionProps}
-          className={'ms-PeoplePicker'}
-          key={'normal'}
-          onRemoveSuggestion={this._onRemoveSuggestion}
-          onValidateInput={this._validateInput}
-          removeButtonAriaLabel={'Remove'}
-          defaultSelectedItems={this.state.currentSelectedItems}
-          onItemSelected={this._onItemSelected}
-          inputProps={{
-            onBlur: (ev: React.FocusEvent<HTMLInputElement>) => {
-            },
-            onFocus: (ev: React.FocusEvent<HTMLInputElement>) => {
-            },
-            'aria-label': 'People Picker'
-          }}
-          componentRef={this._picker}
-          onInputChange={this._onInputChange}
-          resolveDelay={300}
-          disabled={this.props.isPickerDisabled}
-          onChange={() => this.handleChange()}
-        />
+        this.props.context.parameters.selectionType.raw! === "Single" ?
+          <NormalPeoplePicker
+            onResolveSuggestions={this._onFilterChanged}
+            onEmptyInputFocus={this._returnMostRecentlyUsed}
+            getTextFromItem={this._getTextFromItem}
+            pickerSuggestionsProps={suggestionProps}
+            className={'ms-PeoplePicker'}
+            key={'normal'}
+            onRemoveSuggestion={this._onRemoveSuggestion}
+            onValidateInput={this._validateInput}
+            removeButtonAriaLabel={'Remove'}
+            defaultSelectedItems={this.state.currentSelectedItems}
+            onItemSelected={this._onItemSelected}
+            itemLimit={1}
+            inputProps={{
+              onBlur: (ev: React.FocusEvent<HTMLInputElement>) => {
+              },
+              onFocus: (ev: React.FocusEvent<HTMLInputElement>) => {
+              },
+              'aria-label': 'People Picker'
+            }}
+            componentRef={this._picker}
+            onInputChange={this._onInputChange}
+            resolveDelay={300}
+            disabled={this.props.isPickerDisabled}
+            onChange={() => this.handleChange()}
+          />
+          :
+          <NormalPeoplePicker
+            onResolveSuggestions={this._onFilterChanged}
+            onEmptyInputFocus={this._returnMostRecentlyUsed}
+            getTextFromItem={this._getTextFromItem}
+            pickerSuggestionsProps={suggestionProps}
+            className={'ms-PeoplePicker'}
+            key={'normal'}
+            onRemoveSuggestion={this._onRemoveSuggestion}
+            onValidateInput={this._validateInput}
+            removeButtonAriaLabel={'Remove'}
+            defaultSelectedItems={this.state.currentSelectedItems}
+            onItemSelected={this._onItemSelected}
+            inputProps={{
+              onBlur: (ev: React.FocusEvent<HTMLInputElement>) => {
+              },
+              onFocus: (ev: React.FocusEvent<HTMLInputElement>) => {
+              },
+              'aria-label': 'People Picker'
+            }}
+            componentRef={this._picker}
+            onInputChange={this._onInputChange}
+            resolveDelay={300}
+            disabled={this.props.isPickerDisabled}
+            onChange={() => this.handleChange()}
+          />
+
     );
 
   }
@@ -125,7 +128,7 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
 
   private _onItemSelected = (item: any): Promise<IPersonaProps> => {
     const processedItem = { ...item };
-    processedItem.name = `${item.name}`;
+    processedItem.text = `${item.text}`;
     return new Promise<IPersonaProps>((resolve, reject) =>
       resolve(processedItem));
   };
@@ -176,15 +179,15 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
   ): any => {
     if (filterText) {
       if (filterText.length > 2) {
-        return this._searchUsers(filterText);
+        const currentPeople = currentPersonas !== undefined ? currentPersonas : [];
+        return this._searchUsers(filterText, currentPeople);
       }
     } else {
       return [];
     }
   };
 
-  // private async _searchUsers(filterText: string): Promise<IPersonaProps[]> {
-  private _searchUsers(filterText: string): IPersonaProps[] | Promise<IPersonaProps[]> {
+  private _searchUsers(filterText: string, currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> {
     return new Promise(async (resolve: any, reject: any) => {
       let People: IPersonaProps[] = [];
 
@@ -195,8 +198,8 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
 
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=fullname,internalemailaddress&$filter=startswith(fullname,'${filterText}')`);
           People = tempPeople.entities.map((entity: any) => ({
-            fullName: entity.fullname,
-            email: entity.internalemailaddress
+            text: entity.fullname,
+            secondaryText: entity.internalemailaddress
           }));
         } else if (entityName === "aaduser") {
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=displayname,mail,accountenabled&$filter=startswith(displayname,'${filterText}') and usertype eq 'member' and mail ne null`);
@@ -207,18 +210,19 @@ export class TeamMemberPickerTypes extends React.Component<any, ITeamMemberPicke
                 : true
             )
             .map((entity: any) => ({
-              fullName: entity.displayname,
-              email: entity.mail
+              text: entity.displayname,
+              secondaryText: entity.mail
             }));
         } else if (entityName === "team" && this.props.context.parameters.teamId.raw! !== "12345678-1234-1234-1234-123456789012") {
           tempPeople = await this.props.context.webAPI.retrieveMultipleRecords("teammemberships", `?$select=systemuserid&$filter=teamid eq ${this.props.context.parameters.teamId}`);
           const usersMatched = await this.props.context.webAPI.retrieveMultipleRecords(entityName, `?$select=fullname,internalemailaddress,systemuserid&$filter=startswith(fullname,'${filterText}')`);
           const matchedTeamUsers = usersMatched.entities.filter((user: any) => tempPeople.entities.some((people: any) => people.systemuserid === user.systemuserid));
           People = matchedTeamUsers.map((entity: any) => ({
-            fullName: entity.fullname,
-            email: entity.internalemailaddress
+            text: entity.fullname,
+            secondaryText: entity.internalemailaddress
           }));
         }
+        People = this._removeDuplicates(People, currentPersonas);
 
         resolve(People);
       } catch (err) {
