@@ -1,11 +1,12 @@
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client'
 import { ITeamMemberPickerProps, IPeoplePersona, TeamMemberPickerTypes } from './TeamMemberPicker';
 export class TeamMemberPickerControlV2 implements ComponentFramework.StandardControl<IInputs, IOutputs> {
     private theContainer: HTMLDivElement;
     private notifyOutputChanged: () => void;
     private _context: ComponentFramework.Context<IInputs>;
+    private root: Root | null = null;
     private props: ITeamMemberPickerProps = {
         peopleList: this.peopleList.bind(this),
     }
@@ -44,14 +45,37 @@ export class TeamMemberPickerControlV2 implements ComponentFramework.StandardCon
             if (context.parameters.teamMember.raw!.indexOf("fullName") > 1 || context.parameters.teamMember.raw!.indexOf("text") > 1) {
                 this.props.preselectedpeople = JSON.parse(context.parameters.teamMember.raw!);
             }
+        } else {
+            if (context.parameters.existingTeamMember.raw !== null || context.parameters.existingMember.raw !== null) {
+                if (context.parameters.existingTeamMember.raw !== null) {
+                    if (context.parameters.existingTeamMember.raw!.indexOf("fullName") > 1 || context.parameters.existingTeamMember.raw!.indexOf("text") > 1) {
+                        this.props.preselectedpeople = JSON.parse(context.parameters.existingTeamMember.raw!);
+                    }
+                } else if ((context.parameters.teamMember.raw === null && context.parameters.existingTeamMember.raw === null) && context.parameters.existingMember.raw !== null) {
+                    let member = context.parameters.existingMember.raw!.trim();
+                    member = member.slice(0, -1);
+                    this.props.preselectedpeople = member.split(';').map((a) => {
+                        if (a.trim() !== "" || null) {
+                            const name = a.split(',');
+                            return {
+                                "fullName": a,
+                                "email": name.length === 2 ? `${name[1]}.${name[0]}@dhs.nj.gov` : a,
+                            }
+                        }
+                    });
+                }
+            }
         }
 
-        ReactDOM.render(
+        if (!this.root) {
+            this.root = createRoot(this.theContainer);
+        }
+
+        this.root.render(
             React.createElement(
                 TeamMemberPickerTypes,
                 this.props
-            ),
-            this.theContainer
+            )
         );
 
     }
@@ -85,6 +109,8 @@ export class TeamMemberPickerControlV2 implements ComponentFramework.StandardCon
     public destroy(): void {
 
         // Add code to cleanup control if necessary
-        ReactDOM.unmountComponentAtNode(this.theContainer);
+        if (this.root) {
+            this.root.unmount();
+        }
     }
 }

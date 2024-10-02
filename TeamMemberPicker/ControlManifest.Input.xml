@@ -20,9 +20,6 @@
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
     <!-- <property name="sampleProperty" display-name-key="Property_Display_Key" description-key="Property_Desc_Key" of-type="SingleLine.Text" usage="bound" required="true" /> -->
     <property name="teamMember" display-name-key="teamMember" description-key="field_Value" of-type="Multiple" usage="bound" required="true" />
-    <!-- <property name="entityName" display-name-key="entityName" description-key="entity name system or aaduser or team" of-type="SingleLine.Text" usage="input" required="true" default-value="systemuser"/>
-    <property name="selectionType" display-name-key="selectionType" description-key="selection Type - Single or Multi" of-type="SingleLine.Text" usage="input" required="true" default-value="Single"/>
-    <property name="loadEnabledAccounts" display-name-key="loadEnabledAccounts" description-key="Load AAD User Enabled/Active Accounts or all accounts - true/false" of-type="SingleLine.Text" usage="input" required="true" default-value="true" /> -->
     <property name="entityName" display-name-key="entityName" description-key="entity name system or aaduser or team" of-type="Enum" usage="input" required="true" default-value="systemuser">
     <value name="System User" display-name-key="System User">systemuser</value>
     <value name="Azure AD User" display-name-key="Azure AD User">aaduser</value>
@@ -36,6 +33,8 @@
         <value name="True" display-name-key="Aztive User Only">true</value>
     <value name="False" display-name-key="All Users">false</value>
     </property>
+    <property name="existingTeamMember" display-name-key="existingteamMember" description-key="existing team Member" of-type="Multiple" usage="input" required="true" default-value="" />
+    <property name="existingMember" display-name-key="Existing Members" description-key="Existing Members" of-type="SingleLine.Text" usage="input" required="true" default-value=""/>
     <property name="teamId" display-name-key="teamGuid" description-key="team Guid Id" of-type="SingleLine.Text" usage="input" required="true" default-value="12345678-1234-1234-1234-123456789012" />
     <!--
       Property node's of-type attribute can be of-type-group attribute.
