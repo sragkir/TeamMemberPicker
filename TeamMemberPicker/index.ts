@@ -1,6 +1,6 @@
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import * as React from 'react';
-import { createRoot, Root } from 'react-dom/client'
+import { createRoot, Root } from 'react-dom/client';
 import { ITeamMemberPickerProps, IPeoplePersona, TeamMemberPickerTypes } from './TeamMemberPicker';
 export class TeamMemberPickerControlV2 implements ComponentFramework.StandardControl<IInputs, IOutputs> {
     private theContainer: HTMLDivElement;

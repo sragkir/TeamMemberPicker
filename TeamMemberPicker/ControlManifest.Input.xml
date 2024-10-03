@@ -30,7 +30,7 @@
     <value name="Multi" display-name-key="Multiple Selection">Multi</value>
     </property>
     <property name="loadEnabledAccounts" display-name-key="loadEnabledAccounts" description-key="Load AAD User Enabled/Active Accounts or all accounts - true/false" of-type="Enum" usage="input" required="true" default-value="true">
-        <value name="True" display-name-key="Aztive User Only">true</value>
+        <value name="True" display-name-key="Active User Only">true</value>
     <value name="False" display-name-key="All Users">false</value>
     </property>
     <property name="existingTeamMember" display-name-key="existingteamMember" description-key="existing team Member" of-type="Multiple" usage="input" required="true" default-value="" />
