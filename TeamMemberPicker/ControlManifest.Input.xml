@@ -33,8 +33,6 @@
         <value name="True" display-name-key="Active User Only">true</value>
     <value name="False" display-name-key="All Users">false</value>
     </property>
-    <property name="existingTeamMember" display-name-key="existingteamMember" description-key="existing team Member" of-type="Multiple" usage="input" required="true" default-value="" />
-    <property name="existingMember" display-name-key="Existing Members" description-key="Existing Members" of-type="SingleLine.Text" usage="input" required="true" default-value=""/>
     <property name="teamId" display-name-key="teamGuid" description-key="team Guid Id" of-type="SingleLine.Text" usage="input" required="true" default-value="12345678-1234-1234-1234-123456789012" />
     <!--
       Property node's of-type attribute can be of-type-group attribute.

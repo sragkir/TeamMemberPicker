@@ -30,6 +30,7 @@ export class TeamMemberPickerControlV2 implements ComponentFramework.StandardCon
         this.notifyOutputChanged = notifyOutputChanged;
         this._context = context;
         this.theContainer = container;
+
     }
 
 
@@ -41,42 +42,51 @@ export class TeamMemberPickerControlV2 implements ComponentFramework.StandardCon
         // Add code to update control view
         this.props.context = context;
         this.props.isPickerDisabled = context.mode.isControlDisabled;
+        // @ts-ignore
+        let isLoading: boolean = context.parameters.teamMember.isPropertyLoading;
+        if (isLoading) {
+            console.log("teamMember", context.parameters.teamMember);
+        }
+
         if (context.parameters.teamMember.raw !== null) {
             if (context.parameters.teamMember.raw!.indexOf("fullName") > 1 || context.parameters.teamMember.raw!.indexOf("text") > 1) {
                 this.props.preselectedpeople = JSON.parse(context.parameters.teamMember.raw!);
             }
-        } else {
-            if (context.parameters.existingTeamMember.raw !== null || context.parameters.existingMember.raw !== null) {
-                if (context.parameters.existingTeamMember.raw !== null) {
-                    if (context.parameters.existingTeamMember.raw!.indexOf("fullName") > 1 || context.parameters.existingTeamMember.raw!.indexOf("text") > 1) {
-                        this.props.preselectedpeople = JSON.parse(context.parameters.existingTeamMember.raw!);
-                    }
-                } else if ((context.parameters.teamMember.raw === null && context.parameters.existingTeamMember.raw === null) && context.parameters.existingMember.raw !== null) {
-                    let member = context.parameters.existingMember.raw!.trim();
-                    member = member.slice(0, -1);
-                    this.props.preselectedpeople = member.split(';').map((a) => {
-                        if (a.trim() !== "" || null) {
-                            const name = a.split(',');
-                            return {
-                                "fullName": a,
-                                "email": name.length === 2 ? `${name[1]}.${name[0]}@dhs.nj.gov` : a,
-                            }
-                        }
-                    });
-                }
-            }
+        // } else {
+        //     if (context.parameters.existingTeamMember.raw !== null || context.parameters.existingMember.raw !== null) {
+        //         if (context.parameters.existingTeamMember.raw !== null) {
+        //             if (context.parameters.existingTeamMember.raw!.indexOf("fullName") > 1 || context.parameters.existingTeamMember.raw!.indexOf("text") > 1) {
+        //                 this.props.preselectedpeople = JSON.parse(context.parameters.existingTeamMember.raw!);
+        //             }
+        //         } else if ((context.parameters.teamMember.raw === null && context.parameters.existingTeamMember.raw === null) && context.parameters.existingMember.raw !== null) {
+        //             let member = context.parameters.existingMember.raw!.trim();
+        //             member = member.slice(0, -1);
+        //             this.props.preselectedpeople = member.split(';').map((a) => {
+        //                 if (a.trim() !== "" || null) {
+        //                     const name = a.split(',');
+        //                     return {
+        //                         "fullName": a,
+        //                         "email": name.length === 2 ? `${name[1]}.${name[0]}@dhs.nj.gov` : a,
+        //                     }
+        //                 }
+        //             });
+        //         }
+        //     }
         }
 
         if (!this.root) {
             this.root = createRoot(this.theContainer);
         }
 
-        this.root.render(
-            React.createElement(
-                TeamMemberPickerTypes,
-                this.props
-            )
-        );
+        if(!isLoading) {
+            this.root.render(
+                React.createElement(
+                    TeamMemberPickerTypes,
+                    this.props
+                )
+            );
+        }
+
 
     }
 
